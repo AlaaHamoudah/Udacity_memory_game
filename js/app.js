@@ -4,8 +4,10 @@
 var movesCounter = 0;
 var lockedCardsCounter = 0;
 var openCards = [];
+var hours =0; seconds =0; minutes=0;
+var timerRef; 
 const cardsNames = [
-  "fa-diamond",
+  "fa-diamond ",
   "fa-paper-plane-o",
   "fa-anchor",
   "fa-bolt",
@@ -31,6 +33,8 @@ const cardsNames = [
  */
 
 initGame();
+timer();
+
 function initGame() {
   const shuffledArray = shuffle(cardsNames);
   let cardItem = shuffledArray.map(card=>{
@@ -68,16 +72,12 @@ function shuffle(array) {
  */
 document.addEventListener('DOMContentLoaded', function(){
 
-    var allCards = document.querySelectorAll(".card");
-
-    allCards.forEach(card => {
-      card.addEventListener("click", function(e) {
-          console.log('eee')
+      document.querySelector('.deck').addEventListener("click", function(e) {
+          console.log(e.target)
         incrementMovesCounter();
-        toggleCardSymbol(card);
-        addToOpenCards(card);
+        toggleCardSymbol(e.target);
+        addToOpenCards(e.target);
       });
-    });
     
     
     const restartButton = document.querySelector('.restart')
@@ -90,6 +90,28 @@ document.addEventListener('DOMContentLoaded', function(){
 
 });
 
+
+function tick() {
+  seconds++;
+  if (seconds >= 60) {
+      seconds = 0;
+      minutes++;
+      if (minutes >= 60) {
+          minutes = 0;
+          hours++;
+      }
+  }
+  
+document.querySelector('.timer').textContent = (hours ? (hours > 9 ? hours : "0" + hours) : "00") + ":" + (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
+  timer();
+}
+function timer() {
+   timerRef = setTimeout(tick, 1000);
+}
+
+function stopTimer(){
+  clearTimeout(timerRef);
+}
 function toggleCardSymbol(card) {
   card.classList.toggle("show");
   card.classList.toggle("open");
@@ -101,11 +123,11 @@ function addToOpenCards(card) {
   if (openCards.length == 2) {
       // if matched
     if (compareCards(openCards[0], openCards[1] )) {
-
       lockCards(openCards[0], openCards[1]);
       openCards = [];
       if(lockedCardsCounter == cardsNames.length){
           alert ( 'Game finish')
+          stopTimer()
       }
     } else {
       setTimeout(() => {
