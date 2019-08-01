@@ -83,8 +83,8 @@ document.addEventListener('DOMContentLoaded', function(){
     const restartButton = document.querySelector('.restart')
     restartButton.addEventListener('click', function(){
         initGame();
-        lockedCardsCounter= 0;
-        setMoveCounter(0);
+        resetLockedCards();
+        resetMoveCounter();
         resetTimer();
     
     })
@@ -193,7 +193,14 @@ function incrementMovesCounter() {
  function  setMoveCounter(movesCounter){
     document.querySelector(".moves").innerHTML = movesCounter;
  }
-
+ function resetMoveCounter(){
+   movesCounter = 0;
+   setMoveCounter(0);
+ }
+ 
+  function resetLockedCards(){
+    lockedCardsCounter= 0;
+  }
  function showModel(){
   var modal = document.getElementById("myModal");
   modal.style.display = "block";
