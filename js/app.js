@@ -4,8 +4,10 @@
 var movesCounter = 0;
 var lockedCardsCounter = 0;
 var openCards = [];
-var hours =0; seconds =0; minutes=0;
-var timerRef; 
+var hours = 0;
+seconds = 0;
+minutes = 0;
+var timerRef;
 const cardsNames = [
   "fa-diamond ",
   "fa-paper-plane-o",
@@ -24,7 +26,7 @@ const cardsNames = [
   "fa-bicycle",
   "fa-bomb"
 ];
- 
+
 /*
  * Display the cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
@@ -37,11 +39,11 @@ timer();
 
 function initGame() {
   const shuffledArray = shuffle(cardsNames);
-  let cardItem = shuffledArray.map(card=>{
-      return ` <li class="card"> <i class="fa ${card}"></i>  </li>`
-  })
+  let cardItem = shuffledArray.map(card => {
+    return ` <li class="card"> <i class="fa ${card}"></i>  </li>`;
+  });
   let allCards = document.querySelector(".deck");
-  allCards.innerHTML = cardItem.join('');
+  allCards.innerHTML = cardItem.join("");
 }
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -70,70 +72,69 @@ function shuffle(array) {
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelector(".deck").addEventListener("click", function(e) {
+    console.log(e.target);
+    incrementMovesCounter();
+    toggleCardSymbol(e.target);
+    addToOpenCards(e.target);
+  });
 
-      document.querySelector('.deck').addEventListener("click", function(e) {
-          console.log(e.target)
-        incrementMovesCounter();
-        toggleCardSymbol(e.target);
-        addToOpenCards(e.target);
-      });
-    
-    
-    const restartButton = document.querySelector('.restart')
-    restartButton.addEventListener('click', function(){
-        initGame();
-        resetLockedCards();
-        resetMoveCounter();
-        resetTimer();
-    
-    })
+  const restartButton = document.querySelector(".restart");
+  restartButton.addEventListener("click", function() {
+    initGame();
+    resetLockedCards();
+    resetMoveCounter();
+    resetTimer();
+  });
 
-     
-    // Get the <span> element that closes the modal
-    var span = document.getElementsByClassName("close")[0];
-    
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function() {
+  // Get the <span> element that closes the modal
+  var span = document.getElementsByClassName("close")[0];
+
+  // When the user clicks on <span> (x), close the modal
+  span.onclick = function() {
+    modal.style.display = "none";
+  };
+
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+    var modal = document.getElementById("myModal");
+    if (event.target == modal) {
       modal.style.display = "none";
     }
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-      var modal = document.getElementById("myModal");
-      if (event.target == modal) {
-        modal.style.display = "none";
-      }
-    }
-
+  };
 });
-
 
 function tick() {
   seconds++;
   if (seconds >= 60) {
-      seconds = 0;
-      minutes++;
-      if (minutes >= 60) {
-          minutes = 0;
-          hours++;
-      }
+    seconds = 0;
+    minutes++;
+    if (minutes >= 60) {
+      minutes = 0;
+      hours++;
+    }
   }
-  
-document.querySelector('.timer').textContent = (hours ? (hours > 9 ? hours : "0" + hours) : "00") + ":" + (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
+
+  document.querySelector(".timer").textContent =
+    (hours ? (hours > 9 ? hours : "0" + hours) : "00") +
+    ":" +
+    (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") +
+    ":" +
+    (seconds > 9 ? seconds : "0" + seconds);
   timer();
 }
 function timer() {
-   timerRef = setTimeout(tick, 1000);
+  timerRef = setTimeout(tick, 1000);
 }
 
-function stopTimer(){
+function stopTimer() {
   clearTimeout(timerRef);
 }
 
-function resetTimer(){
-    seconds=minutes=hours=0;
-    document.querySelector('.timer').textContent ="00:00:00";
+function resetTimer() {
+  seconds = minutes = hours = 0;
+  document.querySelector(".timer").textContent = "00:00:00";
 }
 function toggleCardSymbol(card) {
   card.classList.toggle("show");
@@ -144,14 +145,14 @@ function addToOpenCards(card) {
   openCards.push(card);
 
   if (openCards.length == 2) {
-      // if matched
-    if (compareCards(openCards[0], openCards[1] )) {
+    // if matched
+    if (compareCards(openCards[0], openCards[1])) {
       lockCards(openCards[0], openCards[1]);
       openCards = [];
-      if(lockedCardsCounter == cardsNames.length){
+      if (lockedCardsCounter == cardsNames.length) {
         showModel();
-          alert ( 'Game finish')
-          stopTimer()
+        alert("Game finish");
+        stopTimer();
       }
     } else {
       setTimeout(() => {
@@ -186,23 +187,24 @@ function lockCards(card1, card2) {
 
 function incrementMovesCounter() {
   movesCounter++;
-  setMoveCounter()
+  setMoveCounter();
   document.querySelector(".moves").innerHTML = movesCounter;
 }
 
- function  setMoveCounter(movesCounter){
-    document.querySelector(".moves").innerHTML = movesCounter;
- }
- function resetMoveCounter(){
-   movesCounter = 0;
-   setMoveCounter(0);
- }
- 
-  function resetLockedCards(){
-    lockedCardsCounter= 0;
-  }
- function showModel(){
+function setMoveCounter(movesCounter) {
+  document.querySelector(".moves").innerHTML = movesCounter;
+}
+
+function resetMoveCounter() {
+  movesCounter = 0;
+  setMoveCounter(0);
+}
+
+function resetLockedCards() {
+  lockedCardsCounter = 0;
+}
+
+function showModel() {
   var modal = document.getElementById("myModal");
   modal.style.display = "block";
- }
- 
+}
