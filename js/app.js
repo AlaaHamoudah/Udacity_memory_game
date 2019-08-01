@@ -9,7 +9,7 @@ seconds = 0;
 minutes = 0;
 var timerRef;
 const cardsNames = [
-  "fa-diamond ",
+  "fa-diamond",
   "fa-paper-plane-o",
   "fa-anchor",
   "fa-bolt",
@@ -72,12 +72,20 @@ function shuffle(array) {
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
+var clickedElement;
 document.addEventListener("DOMContentLoaded", function() {
   document.querySelector(".deck").addEventListener("click", function(e) {
-    console.log(e.target);
     incrementMovesCounter();
     toggleCardSymbol(e.target);
-    addToOpenCards(e.target);
+    const cardIndex = [...e.target.parentElement.children].indexOf(e.target);
+    if(!clickedElement){
+      clickedElement = cardIndex
+      addToOpenCards(e.target);
+    } 
+    else if(clickedElement !== cardIndex){
+      addToOpenCards(e.target);
+    }
+   
   });
 
   const restartButton = document.querySelector(".restart");
@@ -140,8 +148,9 @@ function toggleCardSymbol(card) {
   card.classList.toggle("show");
   card.classList.toggle("open");
 }
-
 function addToOpenCards(card) {
+
+
   openCards.push(card);
 
   if (openCards.length == 2) {
@@ -151,7 +160,6 @@ function addToOpenCards(card) {
       openCards = [];
       if (lockedCardsCounter == cardsNames.length) {
         showModel();
-        alert("Game finish");
         stopTimer();
       }
     } else {
