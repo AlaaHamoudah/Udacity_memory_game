@@ -85,8 +85,26 @@ document.addEventListener('DOMContentLoaded', function(){
         initGame();
         lockedCardsCounter= 0;
         setMoveCounter(0);
+        resetTimer();
     
     })
+
+     
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+    
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+      var modal = document.getElementById("myModal");
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
 
 });
 
@@ -112,6 +130,11 @@ function timer() {
 function stopTimer(){
   clearTimeout(timerRef);
 }
+
+function resetTimer(){
+    seconds=minutes=hours=0;
+    document.querySelector('.timer').textContent ="00:00:00";
+}
 function toggleCardSymbol(card) {
   card.classList.toggle("show");
   card.classList.toggle("open");
@@ -126,6 +149,7 @@ function addToOpenCards(card) {
       lockCards(openCards[0], openCards[1]);
       openCards = [];
       if(lockedCardsCounter == cardsNames.length){
+        showModel();
           alert ( 'Game finish')
           stopTimer()
       }
@@ -169,3 +193,9 @@ function incrementMovesCounter() {
  function  setMoveCounter(movesCounter){
     document.querySelector(".moves").innerHTML = movesCounter;
  }
+
+ function showModel(){
+  var modal = document.getElementById("myModal");
+  modal.style.display = "block";
+ }
+ 
