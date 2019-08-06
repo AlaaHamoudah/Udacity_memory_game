@@ -74,45 +74,7 @@ function shuffle(array) {
  */
 var cardIndex, clickedElement;
 document.addEventListener("DOMContentLoaded", function() {
-  document.querySelector(".deck").addEventListener("click", function(e) {
-    incrementMovesCounter();
-    toggleCardSymbol(e.target);
-    cardIndex = [...e.target.parentElement.children].indexOf(e.target);
-    console.log(
-      "cardIndex " + cardIndex + " clickedElement " + clickedElement
-    );
- 
-    if (typeof clickedElement == "undefined"){ 
-      clickedElement = cardIndex
-    console.log(clickedElement);
-  }
-    else if (clickedElement == cardIndex) {
-     // return;
-    }   
-      //  }
-   
-      if (e.target.nodeName == "LI" && cardIndex !== clickedElement) {
-       
-        addToOpenCards(e.target);
-      }
-      clickedElement = cardIndex  = undefined;
-   
-    // let cardIndex = [...e.target.parentElement.children].indexOf(e.target);
-  //  console.log("card index is " + e.target.nodeName);
-    // if (typeof clickedElement == 'undefined') {
-
-    //   clickedElement = cardIndex;
-    //   console.log('init clickedEleme' + clickedElement)
-    //   addToOpenCards(e.target);
-    // } else if (clickedElement !== cardIndex) {
-
-    //   console.log('cards not the same'+ clickedElement + '  '+ cardIndex)
-    //   addToOpenCards(e.target);
-    //   clickedElement=undefined;
-    // }else{
-    //   console.log('same item click dont push')
-    // }
-  });
+    addEventListenerToCards()
 
   const restartButton = document.querySelector(".restart");
   restartButton.addEventListener("click", function() {
@@ -120,6 +82,7 @@ document.addEventListener("DOMContentLoaded", function() {
     resetLockedCards();
     resetMoveCounter();
     resetTimer();
+    addEventListenerToCards()
   });
 
   // Get the <span> element that closes the modal
@@ -139,7 +102,15 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   };
 });
-
+function addEventListenerToCards(){
+  document.querySelectorAll(".card").forEach(card => {
+    card.addEventListener("click", function() {
+      incrementMovesCounter();
+      toggleCardSymbol(this);
+      addToOpenCards(this);
+    });
+  });
+}
 function tick() {
   seconds++;
   if (seconds >= 60) {
@@ -175,13 +146,20 @@ function toggleCardSymbol(card) {
   card.classList.toggle("show");
   card.classList.toggle("open");
 }
+
+function enableClick(cards) {
+  // this function enables the cards to be clicked again
+  cards.forEach(card => card.removeAttribute("style"));
+}
+
 function addToOpenCards(card) {
   openCards.push(card);
-  console.log("open cards", openCards);
+  card.style.pointerEvents = "none";
+  console.log(openCards);
   if (openCards.length == 2) {
     // if matched
     if (compareCards(openCards[0], openCards[1])) {
-      console.log(openCards[0], openCards[1]);
+      //     console.log(openCards[0], openCards[1]);
       lockCards(openCards[0], openCards[1]);
       openCards = [];
       if (lockedCardsCounter == cardsNames.length) {
@@ -189,6 +167,7 @@ function addToOpenCards(card) {
         stopTimer();
       }
     } else {
+      enableClick(openCards);
       setTimeout(() => {
         toggleCardSymbol(openCards[0]);
         toggleCardSymbol(openCards[1]);
