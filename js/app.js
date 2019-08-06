@@ -72,20 +72,46 @@ function shuffle(array) {
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
-var clickedElement;
+var cardIndex, clickedElement;
 document.addEventListener("DOMContentLoaded", function() {
   document.querySelector(".deck").addEventListener("click", function(e) {
     incrementMovesCounter();
     toggleCardSymbol(e.target);
-    const cardIndex = [...e.target.parentElement.children].indexOf(e.target);
-    if(!clickedElement){
+    cardIndex = [...e.target.parentElement.children].indexOf(e.target);
+    console.log(
+      "cardIndex " + cardIndex + " clickedElement " + clickedElement
+    );
+ 
+    if (typeof clickedElement == "undefined"){ 
       clickedElement = cardIndex
-      addToOpenCards(e.target);
-    } 
-    else if(clickedElement !== cardIndex){
-      addToOpenCards(e.target);
-    }
+    console.log(clickedElement);
+  }
+    else if (clickedElement == cardIndex) {
+     // return;
+    }   
+      //  }
    
+      if (e.target.nodeName == "LI" && cardIndex !== clickedElement) {
+       
+        addToOpenCards(e.target);
+      }
+      clickedElement = cardIndex  = undefined;
+   
+    // let cardIndex = [...e.target.parentElement.children].indexOf(e.target);
+  //  console.log("card index is " + e.target.nodeName);
+    // if (typeof clickedElement == 'undefined') {
+
+    //   clickedElement = cardIndex;
+    //   console.log('init clickedEleme' + clickedElement)
+    //   addToOpenCards(e.target);
+    // } else if (clickedElement !== cardIndex) {
+
+    //   console.log('cards not the same'+ clickedElement + '  '+ cardIndex)
+    //   addToOpenCards(e.target);
+    //   clickedElement=undefined;
+    // }else{
+    //   console.log('same item click dont push')
+    // }
   });
 
   const restartButton = document.querySelector(".restart");
@@ -101,6 +127,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // When the user clicks on <span> (x), close the modal
   span.onclick = function() {
+    var modal = document.getElementById("myModal");
     modal.style.display = "none";
   };
 
@@ -149,13 +176,12 @@ function toggleCardSymbol(card) {
   card.classList.toggle("open");
 }
 function addToOpenCards(card) {
-
-
   openCards.push(card);
-
+  console.log("open cards", openCards);
   if (openCards.length == 2) {
     // if matched
     if (compareCards(openCards[0], openCards[1])) {
+      console.log(openCards[0], openCards[1]);
       lockCards(openCards[0], openCards[1]);
       openCards = [];
       if (lockedCardsCounter == cardsNames.length) {
@@ -197,6 +223,7 @@ function incrementMovesCounter() {
   movesCounter++;
   setMoveCounter();
   document.querySelector(".moves").innerHTML = movesCounter;
+  evaluateRating();
 }
 
 function setMoveCounter(movesCounter) {
@@ -215,4 +242,27 @@ function resetLockedCards() {
 function showModel() {
   var modal = document.getElementById("myModal");
   modal.style.display = "block";
+}
+
+function evaluateRating() {
+  switch (movesCounter) {
+    case 10:
+      hideStar(0);
+      break;
+    case 20:
+      hideStar(1);
+      break;
+    case 30:
+      hideStar(2);
+      break;
+    case 40:
+      hideStar(3);
+      break;
+  }
+}
+
+function hideStar(index) {
+  document.querySelector(".stars").getElementsByTagName("li")[
+    index
+  ].style.display = "none";
 }
