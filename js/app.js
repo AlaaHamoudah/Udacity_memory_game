@@ -1,13 +1,14 @@
 /*
  * Create a list that holds all of your cards
  */
-var movesCounter = 0;
-var lockedCardsCounter = 0;
-var openCards = [];
-var hours = 0;
-seconds = 0;
-minutes = 0;
-var timerRef;
+let movesCounter = 0;
+let lockedCardsCounter = 0;
+let openCards = [];
+let hours = 0;
+let seconds = 0;
+let minutes = 0;
+let timerRef;
+let starRate = 5;
 const cardsNames = [
   "fa-diamond",
   "fa-paper-plane-o",
@@ -47,7 +48,7 @@ function initGame() {
 }
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
-  var currentIndex = array.length,
+  let currentIndex = array.length,
     temporaryValue,
     randomIndex;
 
@@ -72,36 +73,37 @@ function shuffle(array) {
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
-var cardIndex, clickedElement;
+let cardIndex, clickedElement;
 document.addEventListener("DOMContentLoaded", function() {
     addEventListenerToCards()
 
   const restartButton = document.querySelector(".restart");
   restartButton.addEventListener("click", function() {
-    initGame();
-    resetLockedCards();
-    resetMoveCounter();
-    resetTimer();
-    addEventListenerToCards()
+    startFreshGame();
   });
 
   // Get the <span> element that closes the modal
-  var span = document.getElementsByClassName("close")[0];
+  const closeModelButton = document.getElementsByClassName("close")[0];
 
   // When the user clicks on <span> (x), close the modal
-  span.onclick = function() {
-    var modal = document.getElementById("myModal");
-    modal.style.display = "none";
+  closeModelButton.onclick = function() {
+    hideModel();
   };
 
   // When the user clicks anywhere outside of the modal, close it
   window.onclick = function(event) {
-    var modal = document.getElementById("myModal");
+    const modal = document.getElementById("myModal");
     if (event.target == modal) {
-      modal.style.display = "none";
+     hideModel();
     }
   };
+
+   document.getElementsByClassName('play-again-button')[0].addEventListener("click", function(){
+    startFreshGame();
+    hideModel();
+    })
 });
+
 function addEventListenerToCards(){
   document.querySelectorAll(".card").forEach(card => {
     card.addEventListener("click", function() {
@@ -130,6 +132,18 @@ function tick() {
     (seconds > 9 ? seconds : "0" + seconds);
   timer();
 }
+function startFreshGame(){
+  initGame();
+  resetLockedCards();
+  resetMoveCounter();
+  resetTimer();
+  addEventListenerToCards();
+}
+
+function hideModel(){
+  const modal = document.getElementById("myModal");
+  modal.style.display = "none";
+}
 function timer() {
   timerRef = setTimeout(tick, 1000);
 }
@@ -155,7 +169,6 @@ function enableClick(cards) {
 function addToOpenCards(card) {
   openCards.push(card);
   card.style.pointerEvents = "none";
-  console.log(openCards);
   if (openCards.length == 2) {
     // if matched
     if (compareCards(openCards[0], openCards[1])) {
@@ -219,7 +232,9 @@ function resetLockedCards() {
 }
 
 function showModel() {
-  var modal = document.getElementById("myModal");
+  const modal = document.getElementById("myModal");
+  document.getElementById('time-consumed').innerHTML = `${hours} : ${minutes} : ${seconds}` 
+  document.getElementById('star-rating').innerHTML = starRate
   modal.style.display = "block";
 }
 
@@ -227,15 +242,19 @@ function evaluateRating() {
   switch (movesCounter) {
     case 10:
       hideStar(0);
+      starRate = 4;
       break;
     case 20:
       hideStar(1);
+      starRate = 3;
       break;
     case 30:
       hideStar(2);
+      starRate = 2;
       break;
     case 40:
       hideStar(3);
+      starRate = 1;
       break;
   }
 }
